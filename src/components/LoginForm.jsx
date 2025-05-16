@@ -49,8 +49,11 @@ function LoginForm({ onClose }) {
       
       // Simulate API call
       setTimeout(() => {
-        toast.success("Login successful!");
-        onClose();
+        toast.success("Login successful! Welcome back.", {
+          onClose: () => {
+            onClose();
+          }
+        });
         setIsSubmitting(false);
       }, 1500);
     }

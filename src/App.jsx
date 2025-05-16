@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import Modal from './components/Modal';
+import LoginForm from './components/LoginForm';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
@@ -9,6 +11,8 @@ import Dashboard from './pages/Dashboard';
 import Register from './pages/Register';
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('darkMode') === 'true' || 
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -25,6 +29,18 @@ function App() {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+  };
+
+  const [showLoginModal, setShowLoginModal] = useState(location.search.includes('showLogin=true'));
+
+  const openLoginModal = () => {
+    setShowLoginModal(true);
+    navigate('?showLogin=true', { replace: true });
+  };
+
+  const closeLoginModal = () => {
+    setShowLoginModal(false);
+    navigate(location.pathname, { replace: true });
   };
 
   return (
@@ -48,7 +64,12 @@ function App() {
           </a>
           <div className="hidden md:flex items-center space-x-6">
             <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
-            <a href="/dashboard?showLogin=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Login</a>
+            <button 
+              onClick={openLoginModal}
+              className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light bg-transparent border-none p-0 cursor-pointer"
+            >
+              Login
+            </button>
             <a href="/dashboard?showRegister=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Register</a>
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
@@ -84,6 +105,11 @@ function App() {
           <p className="text-center text-surface-500">© {new Date().getFullYear()} CareerPulse. All rights reserved.</p>
         </div>
       </footer>
+      
+      {/* Login Modal */}
+      <Modal isOpen={showLoginModal} onClose={closeLoginModal}>
+        <LoginForm onClose={closeLoginModal} />
+      </Modal>
     </div>
   );
 }
