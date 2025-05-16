@@ -428,8 +428,7 @@ const MainFeature = ({ darkMode }) => {
                 setFilters({
                   location: "All Locations",
                   jobType: "All Types",
-                  rating: "All Ratings"
-                  jobType: "All Types"
+                  rating: "All Ratings",
                 });
                 setSearchQuery('');
               }}
