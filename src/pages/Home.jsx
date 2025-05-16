@@ -1,24 +1,27 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import MainFeature from '../components/MainFeature';
+import RegisterForm from '../components/RegisterForm';
 import { getIcon } from '../utils/iconUtils';
 
 const Home = ({ darkMode }) => {
   const [showInterview, setShowInterview] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   
   const handleShowTips = () => {
     setShowInterview(true);
-    // Allow component to render before scrolling
-    setTimeout(() => {
-      const element = document.getElementById('interview-tips');
-      element?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-    toast.success("Interview tips loaded successfully!");
+    scrollToSection('interview-tips');
+    toast.info("Interview tips loaded successfully!");
   };
 
   const handleHideTips = () => {
     setShowInterview(false);
+  };
+  
+  const scrollToSection = (id) => {
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 100);
   };
 
   const BriefcaseIcon = getIcon('Briefcase');
@@ -40,7 +43,7 @@ const Home = ({ darkMode }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Find Your Dream Job with <span className="text-primary dark:text-primary-light">CareerPulse</span>
+              Advance Your Career with <span className="text-primary dark:text-primary-light">CareerPulse</span>
             </motion.h1>
             <motion.p 
               className="text-lg md:text-xl text-surface-600 dark:text-surface-300 mb-8"
@@ -61,7 +64,16 @@ const Home = ({ darkMode }) => {
                 Start Job Search
               </a>
               <button 
-                onClick={handleShowTips} 
+                onClick={() => {
+                  setShowRegister(true);
+                  scrollToSection('register-section');
+                }}
+                className="btn-primary"
+              >
+                Register Now
+              </button>
+              <button 
+                onClick={handleShowTips}
                 className="btn-outline"
               >
                 <TrendingUpIcon className="w-5 h-5 mr-2" />
@@ -112,6 +124,23 @@ const Home = ({ darkMode }) => {
           </div>
         </div>
       </section>
+      
+      {/* Registration Section (Conditionally Rendered) */}
+      {showRegister && (
+        <motion.section 
+          id="register-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="py-10 md:py-16"
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <RegisterForm onClose={() => setShowRegister(false)} />
+            </div>
+          </div>
+        </motion.section>
+      )}
 
       {/* Main Feature - Job Search */}
       <section id="job-search" className="py-10 md:py-16">
@@ -184,6 +213,15 @@ const Home = ({ darkMode }) => {
             </div>
           </div>
         </motion.section>
+      )}
+      
+      {/* Login Link Section */}
+      <section className="py-8 bg-surface-50 dark:bg-surface-800">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-surface-600 dark:text-surface-400">
+            Already have an account? <Link to="/login" className="text-primary hover:underline">Login here</Link>
+          </p>
+        </div>
       )}
     </div>
   );
