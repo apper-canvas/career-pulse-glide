@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { getIcon } from '../utils/iconUtils';
+import { getIcon } from '../utils/iconUtils.jsx';
 
 const ResumeUpload = ({ currentResume, onResumeUpload, onResumeDelete }) => {
   const [isDragging, setIsDragging] = useState(false);
