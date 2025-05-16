@@ -8,19 +8,43 @@ import DashboardHeader from '../components/DashboardHeader';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('resume');
-  const [resumeFile, setResumeFile] = useState(null);
-  const [userProfile, setUserProfile] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    location: '',
-    title: '',
-    company: '',
-    yearsOfExperience: '',
-    education: '',
-    skills: [],
-    bio: ''
+  
+  // Try to load resume from localStorage
+  const [resumeFile, setResumeFile] = useState(() => {
+    const savedResume = localStorage.getItem('userResume');
+    return savedResume ? JSON.parse(savedResume) : null;
+  });
+  
+  // Initialize userProfile with localStorage data or defaults
+  const [userProfile, setUserProfile] = useState(() => {
+    const savedProfile = localStorage.getItem('userProfile');
+    return savedProfile ? JSON.parse(savedProfile) : {
+      // Personal Information
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      location: '',
+      dateOfBirth: '',
+      
+      // Professional Information
+      headline: '',
+      title: '',
+      company: '',
+      yearsOfExperience: '',
+      education: '',
+      skills: [],
+      bio: '',
+      website: '',
+      certifications: '',
+      languages: '',
+      
+      // Social Links
+      socialLinks: {
+        linkedIn: '',
+        github: ''
+      }
+    };
   });
   const [jobPreferences, setJobPreferences] = useState({
     desiredTitle: '',
@@ -39,16 +63,20 @@ const Dashboard = () => {
 
   const handleResumeUpload = (file) => {
     setResumeFile(file);
+    // Save to localStorage
+    localStorage.setItem('userResume', JSON.stringify(file));
     toast.success('Resume uploaded successfully!');
   };
 
   const handleResumeDelete = () => {
     setResumeFile(null);
+    localStorage.removeItem('userResume');
     toast.info('Resume removed successfully.');
   };
 
   const handleProfileUpdate = (profileData) => {
     setUserProfile(profileData);
+    localStorage.setItem('userProfile', JSON.stringify(profileData));
     toast.success('Profile updated successfully!');
   };
 
