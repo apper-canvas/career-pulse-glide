@@ -84,6 +84,7 @@ const Home = ({ darkMode }) => {
                   if (showLogin) {
                     setShowLogin(false);
                   }
+                }}
               >
                 Register Now
               </button>
@@ -176,7 +177,7 @@ const Home = ({ darkMode }) => {
         size="lg"
       >
         <RegisterForm onClose={() => setShowRegisterModal(false)} />
-      )}
+      </Modal>
       
       {/* Login Section (Conditionally Rendered) */}
       {showLogin && (
