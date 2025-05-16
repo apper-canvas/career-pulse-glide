@@ -425,6 +425,7 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
             </div>
           </div>
         <div>
+        </div>
           <label className="label" htmlFor="bio">Professional Summary</label>
           <textarea
             id="bio"
@@ -440,6 +441,7 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
           </p>
         </div>
         </div>
+      </div>
       )}
       <div className="flex justify-end">
         <button type="submit" className="btn-primary" disabled={isSubmitting}>
