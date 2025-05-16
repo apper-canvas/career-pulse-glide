@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { getIcon } from '../utils/iconUtils.jsx';
 import ResumeUpload from '../components/ResumeUpload';
 import UserProfileForm from '../components/UserProfileForm';
@@ -8,8 +9,14 @@ import DashboardHeader from '../components/DashboardHeader';
 import Modal from '../components/Modal';
 import RegisterForm from '../components/RegisterForm';
 import LoginForm from '../components/LoginForm';
+import { toast } from 'react-toastify';
+import { updateProfile, updateJobPreferences } from '../store/slices/userProfileSlice';
+import { logout } from '../store/slices/authSlice';
 
 const Dashboard = () => {
+  const [searchParams] = useSearchParams();
+  const activeTabFromURL = searchParams.get('activeTab');
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('resume');
   
   // Try to load resume from localStorage
@@ -19,37 +26,16 @@ const Dashboard = () => {
   });
   
   // Initialize userProfile with localStorage data or defaults
-  const [userProfile, setUserProfile] = useState(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    return savedProfile ? JSON.parse(savedProfile) : {
-      // Personal Information
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      location: '',
-      dateOfBirth: '',
-      
-      // Professional Information
-      headline: '',
-      title: '',
-      company: '',
-      yearsOfExperience: '',
-      education: '',
-      skills: [],
-      bio: '',
-      website: '',
-      certifications: '',
-      languages: '',
-      
-      // Social Links
-      socialLinks: {
-        linkedIn: '',
-        github: ''
-      }
-    };
-  });
-  const [jobPreferences, setJobPreferences] = useState({
+  const userProfileState = useSelector(state => state.userProfile);
+  const { user, isAuthenticated } = useSelector(state => state.auth);
+  
+  // Set userProfile from Redux state
+  const userProfile = userProfileState.profile;
+  
+  // Set job preferences from Redux state
+  const jobPreferences = userProfileState.jobPreferences;
+  
+  // Initialize job preferences defaults if needed
     desiredTitle: '',
     desiredLocation: '',
     desiredIndustry: '',
@@ -57,13 +43,17 @@ const Dashboard = () => {
     workType: 'Full-time',
     remotePreference: 'Hybrid',
     relocationWillingness: false
-  });
   
-  const [searchParams] = useSearchParams();
+  // Use activeTab from URL if available, otherwise use state
+  useEffect(() => {
+    if (activeTabFromURL) {
+      setActiveTab(activeTabFromURL);
+    }
+  }, [activeTabFromURL]);
+  
   const [showRegisterModal, setShowRegisterModal] = useState(searchParams.get('showRegister') === 'true');
   const [showLoginModal, setShowLoginModal] = useState(searchParams.get('showLogin') === 'true');
   const navigate = useNavigate();
-
   // Icons
   const UserIcon = getIcon('user');
   const FileIcon = getIcon('filebadge');
@@ -86,13 +76,17 @@ const Dashboard = () => {
   };
 
   const handleProfileUpdate = (profileData) => {
-    setUserProfile(profileData);
+    // Update profile in Redux store
+    dispatch(updateProfile(profileData));
+    // Save to localStorage for redundancy
     localStorage.setItem('userProfile', JSON.stringify(profileData));
     toast.success('Profile updated successfully!');
   };
 
   const handlePreferencesUpdate = (preferencesData) => {
-    setJobPreferences(preferencesData);
+    // Update job preferences in Redux store
+    dispatch(updateJobPreferences(preferencesData));
+    // Save to localStorage for redundancy
     toast.success('Job preferences updated successfully!');
   };
   
@@ -115,6 +109,13 @@ const Dashboard = () => {
     setShowLoginModal(false);
     navigate('/dashboard', { replace: true });
   };
+  
+  const handleLogout = async () => {
+    await dispatch(logout());
+    toast.success('Logged out successfully');
+    navigate('/');
+  };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -169,6 +170,22 @@ const Dashboard = () => {
           <AccountIcon className="w-4 h-4 mr-2" />
           Account
         </button>
+        {isAuthenticated && (
+          <div className="ml-auto flex items-center">
+            <div className="px-4 py-2 text-sm text-surface-600 dark:text-surface-400">
+              Welcome, {user?.displayName || 'User'}
+            </div>
+            <button
+              className="text-red-500 hover:text-red-600 px-3 py-2 text-sm flex items-center"
+              onClick={handleLogout}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tab Content */}
@@ -220,6 +237,7 @@ const Dashboard = () => {
             <div>
               <h2 className="text-2xl font-bold mb-6 text-surface-900 dark:text-white">Account Management</h2>
               <p className="text-surface-600 dark:text-surface-300 mb-6">
+                {isAuthenticated ? 'Manage your account settings and preferences.' : 
                 Register for a new account or login to access all features.
               </p>
               
@@ -256,6 +274,33 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
+              ) : (
+              <div className="space-y-6">
+                <div className="bg-white dark:bg-surface-800 p-6 rounded-xl border border-surface-200 dark:border-surface-700">
+                  <div className="flex items-center mb-4">
+                    <AccountIcon className="w-6 h-6 text-primary mr-3" />
+                    <h3 className="text-xl font-semibold">Account Information</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <span className="text-surface-500 dark:text-surface-400">Email: </span>
+                      <span className="font-medium">{user?.email}</span>
+                    </div>
+                    <div>
+                      <span className="text-surface-500 dark:text-surface-400">Name: </span>
+                      <span className="font-medium">{user?.displayName || 'Not set'}</span>
+                    </div>
+                    <div>
+                      <span className="text-surface-500 dark:text-surface-400">Account created: </span>
+                      <span className="font-medium">{user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'Unknown'}</span>
+                    </div>
+                    <button onClick={handleLogout} className="mt-4 btn-outline border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              </div>
+              )}
             </div>
           )}
         </div>

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getIcon } from '../utils/iconUtils';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateProfile } from '../store/slices/userProfileSlice';
 
 const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
   const [profile, setProfile] = useState(() => {
@@ -9,6 +11,8 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
   const [activeSection, setActiveSection] = useState('personal');
 
   // Icons
@@ -55,6 +59,9 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
   };
 
   const validateForm = () => {
+    
+    // Update both local state and Redux store
+    dispatch(updateProfile(formData));
     const newErrors = {};
     
     if (!profile.firstName) newErrors.firstName = 'First name is required';

@@ -1,146 +1,42 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import FormField from '../components/FormField';
-import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
-import { validateEmail, validatePassword, validateField } from '../utils/formValidation';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import RegisterForm from '../components/RegisterForm';
 
 const Register = ({ darkMode }) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    currentJobTitle: '',
-    yearsOfExperience: '',
-    industry: '',
-  });
+  const { isAuthenticated } = useSelector(state => state.auth);
 
-  const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const industries = [
-    'Technology',
-    'Healthcare',
-    'Finance',
-    'Education',
-    'Manufacturing',
-    'Retail',
-    'Media',
-    'Construction',
-    'Transportation',
-    'Hospitality',
-    'Other'
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    // Personal details validation
-    if (!validateField(formData.firstName)) newErrors.firstName = 'First name is required';
-    if (!validateField(formData.lastName)) newErrors.lastName = 'Last name is required';
-    if (!validateField(formData.email)) {
-      newErrors.email = 'Email is required';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    
-    if (!validateField(formData.phone)) newErrors.phone = 'Phone number is required';
-    
-    // Professional details validation
-    if (!validateField(formData.currentJobTitle)) newErrors.currentJobTitle = 'Current job title is required';
-    if (!validateField(formData.yearsOfExperience)) {
-      newErrors.yearsOfExperience = 'Years of experience is required';
-    } else if (isNaN(formData.yearsOfExperience) || formData.yearsOfExperience < 0) {
-      newErrors.yearsOfExperience = 'Please enter a valid number';
-    }
-    
-    if (!validateField(formData.industry)) newErrors.industry = 'Please select an industry';
-    
-    // Password validation
-    if (!validateField(formData.password)) {
-      newErrors.password = 'Password is required';
-    } else if (!validatePassword(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters with a mix of letters, numbers, and symbols';
-    }
-    
-    if (!validateField(formData.confirmPassword)) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    
-    // Terms validation
-    if (!termsAccepted) {
-      newErrors.terms = 'You must accept the terms and conditions';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Simulate API call with setTimeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Save user data to localStorage (in a real app, this would be an API call)
-      const userData = {
-        ...formData,
-        id: Date.now().toString(),
-        registeredAt: new Date().toISOString(),
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(userData));
-      
-      toast.success('Registration successful! Welcome to CareerPulse.');
+  // If already authenticated, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate('/dashboard');
-    } catch (error) {
-      toast.error('Registration failed. Please try again.');
-      console.error('Registration error:', error);
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-8">Candidate Registration</h1>
+        <RegisterForm onClose={() => navigate('/dashboard')} />
         
-        <div className="card p-6 mb-8">
-          <form onSubmit={handleSubmit}>
+        <div className="mt-8 text-center text-surface-600 dark:text-surface-400">
+          <p>By registering, you'll get access to:</p>
+          <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2 max-w-lg mx-auto text-left list-disc list-inside">
+            <li>Personalized job recommendations</li>
+            <li>Application tracking system</li>
+            <li>Resume builder tools</li>
+            <li>Job alerts for new opportunities</li>
+            <li>Interview preparation resources</li>
+            <li>Career development insights</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4 text-primary dark:text-primary-light">Personal Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

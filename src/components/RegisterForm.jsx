@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import FormField from './FormField';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 import { validateEmail, validatePassword, validateField } from '../utils/formValidation';
+import SocialLoginButtons from './SocialLoginButtons';
+import { register } from '../store/slices/authSlice';
 
-const RegisterForm = ({ onClose }) => {
+const RegisterForm = ({ onClose = () => {} }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -24,6 +28,7 @@ const RegisterForm = ({ onClose }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { error, isLoading } = useSelector(state => state.auth);
 
   const industries = [
     'Technology',
@@ -112,23 +117,28 @@ const RegisterForm = ({ onClose }) => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call with setTimeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Save user data to localStorage (in a real app, this would be an API call)
-      const userData = {
-        ...formData,
-        id: Date.now().toString(),
-        registeredAt: new Date().toISOString(),
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(userData));
-      
-      onClose();
-      toast.success('Registration successful! Welcome to CareerPulse.');
+      const resultAction = await dispatch(register(formData));
+
+      if (register.fulfilled.match(resultAction)) {
+        toast.success('Registration successful! Welcome to CareerPulse.', {
+          onClose: () => {
+            onClose();
+            navigate('/dashboard');
+          }
+        });
+
+        // Save professional info to profile state
+        // This would normally be handled by a separate API call
+        // but we're handling it here for this implementation
+        localStorage.setItem('userProfessionalInfo', JSON.stringify({
+          currentJobTitle: formData.currentJobTitle,
+          yearsOfExperience: formData.yearsOfExperience,
+          industry: formData.industry
+        }));
+      } else if (register.rejected.match(resultAction)) {
+        toast.error(resultAction.payload || 'Registration failed. Please try again.');
+      }
     } catch (error) {
-      toast.error('Registration failed. Please try again.');
-      console.error('Registration error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -312,6 +322,13 @@ const RegisterForm = ({ onClose }) => {
               {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
             </div>
           </div>
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 mb-4 rounded-md text-sm">
+            {error}
+          </div>
+        )}
+
         </div>
         
         <div className="mb-8">
@@ -339,11 +356,11 @@ const RegisterForm = ({ onClose }) => {
           <button
             type="submit"
             className="btn-primary px-6 py-2"
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
-            {isSubmitting ? (
+            {isLoading ? (
               <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -353,6 +370,15 @@ const RegisterForm = ({ onClose }) => {
           </button>
         </div>
       </form>
+
+      <SocialLoginButtons />
+
+      <div className="text-center text-sm mt-6 text-surface-600 dark:text-surface-400">
+        Already have an account?{' '}
+        <Link to="/login" className="font-medium text-primary hover:text-primary-dark dark:hover:text-primary-light" onClick={onClose}>
+          Login here
+        </Link>
+      </div>
     </div>
   );
 };

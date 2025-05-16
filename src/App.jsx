@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { Provider, useSelector } from 'react-redux';
+import { store, persistor } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
 import Modal from './components/Modal';
 import LoginForm from './components/LoginForm';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,14 +12,19 @@ import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoute';
+import UserMenu from './components/UserMenu';
 
-function App() {
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const [darkMode, setDarkMode] = useState(
+    // Get dark mode preference from localStorage or use system preference
     localStorage.getItem('darkMode') === 'true' || 
     window.matchMedia('(prefers-color-scheme: dark)').matches
   );
+  
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (darkMode) {
@@ -64,13 +72,17 @@ function App() {
           </a>
           <div className="hidden md:flex items-center space-x-6">
             <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
-            <button 
-              onClick={openLoginModal}
-              className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light bg-transparent border-none p-0 cursor-pointer"
-            >
-              Login
-            </button>
-            <a href="/dashboard?showRegister=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Register</a>
+            {!isAuthenticated ? (
+              <>
+                <button 
+                  onClick={openLoginModal}
+                  className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Login
+                </button>
+                <a href="/dashboard?showRegister=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Register</a>
+              </>
+            ) : null}
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
           <div className="flex-1 md:flex-none"></div>
@@ -90,13 +102,18 @@ function App() {
             )}
           </button>
         </div>
+        {isAuthenticated && (
+          <UserMenu />
+        )}
       </header>
       <main>
         <Routes>
           <Route path="/" element={<Home darkMode={darkMode} />} />
           <Route path="/login" element={<Navigate to="/dashboard?showLogin=true" replace />} />
           <Route path="/register" element={<Navigate to="/dashboard?showRegister=true" replace />} />
-          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute><Dashboard darkMode={darkMode} /></ProtectedRoute>
+          } />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -111,6 +128,17 @@ function App() {
         <LoginForm onClose={closeLoginModal} />
       </Modal>
     </div>
+  );
+}
+
+// Wrap the app with Redux Provider and PersistGate
+function App() {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppContent />
+      </PersistGate>
+    </Provider>
   );
 }
 
