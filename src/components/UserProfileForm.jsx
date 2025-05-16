@@ -394,7 +394,7 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
           <p className="mt-1 text-xs text-surface-500">List your key technical and professional skills</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="col-span-1 md:col-span-2 space-y-4">
           <h4 className="font-semibold text-lg text-surface-800 dark:text-surface-200">Social Profiles</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -424,24 +424,25 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
               />
             </div>
           </div>
-        <div>
-        </div>
-          <label className="label" htmlFor="bio">Professional Summary</label>
-          <textarea
-            id="bio"
-            name="bio"
-            value={profile.bio}
-            onChange={handleChange}
-            className="input min-h-[120px]"
-            placeholder="Write a brief professional summary"
-          />
-          <p className="mt-1 text-xs text-surface-500">
-            Provide a summary of your professional experience, goals, and strengths. 
-            This will be visible to recruiters.
-          </p>
-        </div>
+          
+          <div>
+            <label className="label" htmlFor="bio">Professional Summary</label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={profile.bio || ''}
+              onChange={handleChange}
+              className="input min-h-[120px]"
+              placeholder="Write a brief professional summary"
+            />
+            <p className="mt-1 text-xs text-surface-500">
+              Provide a summary of your professional experience, goals, and strengths. 
+              This will be visible to recruiters.
+            </p>
+          </div>
         </div>
       </div>
+      
       )}
       <div className="flex justify-end">
         <button type="submit" className="btn-primary" disabled={isSubmitting}>
