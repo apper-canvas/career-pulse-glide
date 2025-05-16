@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Register from './pages/Register';
 
 function App() {
   const [darkMode, setDarkMode] = useState(
@@ -47,7 +48,8 @@ function App() {
           </a>
           <div className="hidden md:flex items-center space-x-6">
             <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
-            <a href="/?showLogin=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Login</a>
+            <a href="/dashboard?showLogin=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Login</a>
+            <a href="/dashboard?showRegister=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Register</a>
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
           <div className="flex-1 md:flex-none"></div>
@@ -71,7 +73,8 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home darkMode={darkMode} />} />
-          <Route path="/login" element={<Navigate to="/?showLogin=true" replace />} />
+          <Route path="/login" element={<Navigate to="/dashboard?showLogin=true" replace />} />
+          <Route path="/register" element={<Navigate to="/dashboard?showRegister=true" replace />} />
           <Route path="/dashboard" element={<Dashboard darkMode={darkMode} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

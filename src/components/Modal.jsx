@@ -1,58 +1,59 @@
 import { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 
-const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
+const Modal = ({ isOpen, onClose, children }) => {
   const modalRef = useRef(null);
-  
+
   useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
-    
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         onClose();
       }
     };
-    
+
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleEsc);
       document.addEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+      // Prevent scrolling when modal is open
+      document.body.style.overflow = 'hidden';
     }
-    
+
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleEsc);
       document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = ''; // Re-enable scrolling when modal is closed
+      // Restore scrolling when modal is closed
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
-  
+
   if (!isOpen) return null;
-  
-  // Size classes
-  const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-2xl',
-    lg: 'max-w-4xl',
-    xl: 'max-w-6xl',
-    full: 'max-w-full mx-4'
-  };
-  
-  return createPortal(
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-        <motion.div ref={modalRef} className={`${sizeClasses[size]} w-full bg-white dark:bg-surface-800 rounded-xl shadow-xl`} 
-          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.2 }}>
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        {/* Background overlay */}
+        <div 
+          className="fixed inset-0 transition-opacity bg-surface-800 bg-opacity-75" 
+          aria-hidden="true"
+        ></div>
+
+        {/* Center modal */}
+        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        {/* Modal panel */}
+        <div 
+          ref={modalRef}
+          className="inline-block w-full max-w-3xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-800 rounded-lg shadow-xl sm:align-middle sm:max-w-lg"
+        >
           {children}
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>,
-    document.body
+    </div>
   );
 };
 

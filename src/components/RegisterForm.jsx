@@ -124,8 +124,8 @@ const RegisterForm = ({ onClose }) => {
       
       localStorage.setItem('userData', JSON.stringify(userData));
       
+      onClose();
       toast.success('Registration successful! Welcome to CareerPulse.');
-      navigate('/dashboard');
     } catch (error) {
       toast.error('Registration failed. Please try again.');
       console.error('Registration error:', error);

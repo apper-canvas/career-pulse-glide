@@ -50,8 +50,8 @@ function LoginForm({ onClose }) {
       // Simulate API call
       setTimeout(() => {
         toast.success("Login successful!");
+        onClose();
         setIsSubmitting(false);
-        navigate('/dashboard');
       }, 1500);
     }
   };
