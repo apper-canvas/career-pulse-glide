@@ -4,12 +4,14 @@ import { toast } from 'react-toastify';
 import { Link, useLocation } from 'react-router-dom';
 import MainFeature from '../components/MainFeature';
 import RegisterForm from '../components/RegisterForm';
+import Modal from '../components/Modal';
 import LoginForm from '../components/LoginForm';
 import { getIcon } from '../utils/iconUtils';
 
 const Home = ({ darkMode }) => {
   const location = useLocation();
   const [showLogin, setShowLogin] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showInterview, setShowInterview] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   
@@ -78,13 +80,10 @@ const Home = ({ darkMode }) => {
               </a>
               <button 
                 onClick={() => {
-                  setShowRegister(true);
+                  setShowRegisterModal(true);
                   if (showLogin) {
                     setShowLogin(false);
                   }
-                  scrollToSection('register-section');
-                }}
-                className="btn-primary"
               >
                 Register Now
               </button>
@@ -168,6 +167,15 @@ const Home = ({ darkMode }) => {
             </div>
           </div>
         </motion.section>
+      )}
+      
+      {/* Register Modal */}
+      <Modal 
+        isOpen={showRegisterModal} 
+        onClose={() => setShowRegisterModal(false)}
+        size="lg"
+      >
+        <RegisterForm onClose={() => setShowRegisterModal(false)} />
       )}
       
       {/* Login Section (Conditionally Rendered) */}
