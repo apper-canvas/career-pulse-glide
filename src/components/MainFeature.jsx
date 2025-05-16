@@ -676,6 +676,7 @@ const MainFeature = ({ darkMode }) => {
                   <>
                   <div className="mb-6">
                     <div className="flex items-center mb-2">
+                    <div className="flex items-center mb-2">
                       <BuildingIcon className="w-5 h-5 text-surface-500 mr-2" />
                       <span className="text-lg font-medium text-surface-900 dark:text-white">{selectedJob.company}</span>
                     </div>
@@ -799,7 +800,6 @@ const MainFeature = ({ darkMode }) => {
                     </form>
                   )}
                 </div>
-                </>
                 </>
                 ) : (
                   <CompanyReviews companyName={selectedJob.company} />
