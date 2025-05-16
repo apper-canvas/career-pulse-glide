@@ -72,17 +72,7 @@ function AppContent() {
           </a>
           <div className="hidden md:flex items-center space-x-6">
             <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
-            {!isAuthenticated ? (
-              <>
-                <button 
-                  onClick={openLoginModal}
-                  className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light bg-transparent border-none p-0 cursor-pointer"
-                >
-                  Login
-                </button>
-                <a href="/dashboard?showRegister=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Register</a>
-              </>
-            ) : null}
+            
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
           <div className="flex-1 md:flex-none"></div>
