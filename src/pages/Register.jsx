@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FormField from '../components/FormField';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
@@ -242,8 +242,8 @@ const Register = ({ darkMode }) => {
                       name="password"
                       className={`input pr-10 ${errors.password ? 'border-red-500' : ''}`}
                       value={formData.password}
-          Already have an account?{' '} 
-          <Link to="/login" className="font-medium text-primary hover:text-primary-dark dark:hover:text-primary-light">
+                      onChange={handleChange}
+                      required
                     />
                     <button
                       type="button"
