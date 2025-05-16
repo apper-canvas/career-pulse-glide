@@ -800,6 +800,7 @@ const MainFeature = ({ darkMode }) => {
                   )}
                 </div>
                 </>
+                </>
                 ) : (
                   <CompanyReviews companyName={selectedJob.company} />
                 )}
