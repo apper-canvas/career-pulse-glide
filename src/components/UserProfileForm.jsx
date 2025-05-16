@@ -52,7 +52,6 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
       ...prev,
       [parent]: { ...prev[parent], [field]: value }
     }));
-    }));
   };
 
   const validateForm = () => {
@@ -350,6 +349,9 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
               onChange={handleChange}
               className="input pl-10"
               placeholder="e.g. Bachelor's in Computer Science"
+            />
+          </div>
+        </div>
 
           <div>
             <label className="label" htmlFor="certifications">Certifications</label>
@@ -377,8 +379,8 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
             <p className="mt-1 text-xs text-surface-500">List languages you speak and proficiency level</p>
           </div>
         </div>
-          </div>
-        <div>
+
+        <div className="col-span-1 md:col-span-2">
           <label className="label" htmlFor="skills">Skills (comma separated)</label>
           <input
             type="text"
@@ -422,8 +424,6 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
               />
             </div>
           </div>
-        </div>
-          placeholder="e.g. JavaScript, React, Node.js"
         <div>
           <label className="label" htmlFor="bio">Professional Summary</label>
           <textarea
@@ -439,12 +439,8 @@ const UserProfileForm = ({ userProfile, onProfileUpdate }) => {
             This will be visible to recruiters.
           </p>
         </div>
-      </div>
+        </div>
       )}
-          placeholder="Write a brief professional summary"
-        />
-      </div>
-      
       <div className="flex justify-end">
         <button type="submit" className="btn-primary" disabled={isSubmitting}>
           {isSubmitting ? (
