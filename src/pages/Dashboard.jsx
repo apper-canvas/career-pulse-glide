@@ -240,10 +240,10 @@ const Dashboard = () => {
             <div>
               <h2 className="text-2xl font-bold mb-6 text-surface-900 dark:text-white">Account Management</h2>
               <p className="text-surface-600 dark:text-surface-300 mb-6">
-                {isAuthenticated ? 'Manage your account settings and preferences.' : 
-                Register for a new account or login to access all features.
+                {isAuthenticated ? 'Manage your account settings and preferences.' : 'Register for a new account or login to access all features.'}
               </p>
               
+              {!isAuthenticated ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                 <div className="bg-white dark:bg-surface-800 p-6 rounded-xl border border-surface-200 dark:border-surface-700">
                   <div className="flex items-center mb-4">
