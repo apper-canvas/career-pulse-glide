@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import Icon from '../utils/iconUtils.jsx';
 import { getIcon } from '../utils/iconUtils';
 import ResumeUpload from '../components/ResumeUpload';
 import UserProfileForm from '../components/UserProfileForm';
