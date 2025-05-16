@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [darkMode, setDarkMode] = useState(
@@ -43,6 +44,11 @@ function App() {
           <a href="/" className="flex items-center space-x-2">
             <span className="text-primary-dark dark:text-primary-light font-bold text-xl md:text-2xl">CareerPulse</span>
           </a>
+          <div className="hidden md:flex items-center space-x-6">
+            <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
+            <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
+          </div>
+          <div className="flex-1 md:flex-none"></div>
           <button
             onClick={toggleDarkMode}
             className="p-2 rounded-full hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
@@ -63,6 +69,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home darkMode={darkMode} />} />
+          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
