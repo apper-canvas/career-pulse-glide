@@ -222,7 +222,7 @@ const Home = ({ darkMode }) => {
             Already have an account? <Link to="/login" className="text-primary hover:underline">Login here</Link>
           </p>
         </div>
-      )}
+      </section>
     </div>
   );
 };
