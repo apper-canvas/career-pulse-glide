@@ -242,8 +242,8 @@ const Register = ({ darkMode }) => {
                       name="password"
                       className={`input pr-10 ${errors.password ? 'border-red-500' : ''}`}
                       value={formData.password}
-                      onChange={handleChange}
-                      required
+          Already have an account?{' '} 
+          <Link to="/login" className="font-medium text-primary hover:text-primary-dark dark:hover:text-primary-light">
                     />
                     <button
                       type="button"
