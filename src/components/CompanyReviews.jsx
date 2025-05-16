@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import StarRating from './StarRating';
-import { getIcon } from '../utils/iconUtils';
+import { getIcon } from '../utils/iconUtils.jsx';
 
 // Mock company reviews data
 const mockReviews = {

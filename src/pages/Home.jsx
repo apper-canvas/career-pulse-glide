@@ -6,7 +6,7 @@ import MainFeature from '../components/MainFeature';
 import RegisterForm from '../components/RegisterForm';
 import Modal from '../components/Modal';
 import LoginForm from '../components/LoginForm';
-import { getIcon } from '../utils/iconUtils';
+import { getIcon } from '../utils/iconUtils.jsx';
 
 const Home = ({ darkMode }) => {
   const location = useLocation();

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Icon from '../utils/iconUtils.jsx';
-import { getIcon } from '../utils/iconUtils';
+import { getIcon } from '../utils/iconUtils.jsx';
 import ResumeUpload from '../components/ResumeUpload';
 import UserProfileForm from '../components/UserProfileForm';
 import JobPreferencesForm from '../components/JobPreferencesForm';
