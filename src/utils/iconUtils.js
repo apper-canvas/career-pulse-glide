@@ -1,9 +1,16 @@
-import * as Icons from 'lucide-react';
+import { 
+  Search, MapPin, Briefcase, SlidersHorizontal, X, Upload, 
+  Building2, DollarSign, Calendar, Check, Star, Smile,
+  TrendingUp, Clock, Bell, Home
+} from 'lucide-react';
 
-  Search, MapPin, Briefcase, SlidersHorizontal, X, Upload, Building2, DollarSign, Calendar, Check, Star
-  return (Icons[iconName] && typeof Icons[iconName] === 'function') 
-    ? Icons[iconName] 
-    : Icons.Smile;
+const icons = {
+  search: Search, mappin: MapPin, briefcase: Briefcase, slidershorizontal: SlidersHorizontal,
+  x: X, upload: Upload, building2: Building2, dollarsign: DollarSign, calendar: Calendar,
+  check: Check, star: Star, smile: Smile, trendingup: TrendingUp, clock: Clock, bell: Bell, home: Home
 };
-    case 'Star':
-      return Star;
+
+export const getIcon = (iconName) => {
+  const normalizedName = iconName?.toLowerCase() || '';
+  return icons[normalizedName] || Smile;
+};
