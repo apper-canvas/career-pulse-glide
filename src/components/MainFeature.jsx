@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { getIcon } from '../utils/iconUtils';
+import StarRating from './StarRating';
+import CompanyReviews from './CompanyReviews';
 
 // Mock job data
 const mockJobs = [
@@ -15,7 +17,9 @@ const mockJobs = [
     industry: "Technology",
     postedDate: "2023-05-15",
     description: "We're looking for a Senior Frontend Developer with expertise in React, TypeScript, and modern CSS frameworks to join our dynamic team.",
-    requirements: "5+ years of experience with React, Proficiency in TypeScript, Experience with modern CSS frameworks"
+    requirements: "5+ years of experience with React, Proficiency in TypeScript, Experience with modern CSS frameworks",
+    companyRating: 4.5,
+    reviewCount: 7
   },
   {
     id: 2,
@@ -27,7 +31,9 @@ const mockJobs = [
     industry: "Design",
     postedDate: "2023-05-17",
     description: "Join our creative team to design beautiful, intuitive user interfaces for web and mobile applications.",
-    requirements: "3+ years of UI/UX design experience, Proficiency with Figma and Adobe Creative Suite, Portfolio showcasing your work"
+    requirements: "3+ years of UI/UX design experience, Proficiency with Figma and Adobe Creative Suite, Portfolio showcasing your work",
+    companyRating: 5.0,
+    reviewCount: 4
   },
   {
     id: 3,
@@ -39,7 +45,9 @@ const mockJobs = [
     industry: "Data Science",
     postedDate: "2023-05-12",
     description: "Help us extract valuable insights from complex datasets and build predictive models to solve business problems.",
-    requirements: "MS or PhD in a quantitative field, Experience with Python, R, and SQL, Knowledge of machine learning algorithms"
+    requirements: "MS or PhD in a quantitative field, Experience with Python, R, and SQL, Knowledge of machine learning algorithms",
+    companyRating: 4.0,
+    reviewCount: 3
   },
   {
     id: 4,
@@ -51,7 +59,9 @@ const mockJobs = [
     industry: "Marketing",
     postedDate: "2023-05-18",
     description: "Lead our marketing efforts to drive brand awareness, customer acquisition, and engagement across multiple channels.",
-    requirements: "5+ years of marketing experience, Experience with digital marketing channels, Strong analytical skills"
+    requirements: "5+ years of marketing experience, Experience with digital marketing channels, Strong analytical skills",
+    companyRating: 2.8,
+    reviewCount: 9
   },
   {
     id: 5,
@@ -63,7 +73,9 @@ const mockJobs = [
     industry: "Technology",
     postedDate: "2023-05-10",
     description: "Design and implement scalable backend services and APIs for our cloud-based platform.",
-    requirements: "Strong experience with Node.js or Python, Knowledge of database systems, Experience with AWS or GCP"
+    requirements: "Strong experience with Node.js or Python, Knowledge of database systems, Experience with AWS or GCP",
+    companyRating: 4.2,
+    reviewCount: 5
   },
   {
     id: 6,
@@ -75,7 +87,9 @@ const mockJobs = [
     industry: "Product Management",
     postedDate: "2023-05-16",
     description: "Drive product strategy and roadmap for our SaaS platform, working closely with engineering, design, and marketing teams.",
-    requirements: "3+ years of product management experience, Technical background preferred, Strong communication skills"
+    requirements: "3+ years of product management experience, Technical background preferred, Strong communication skills",
+    companyRating: 3.5,
+    reviewCount: 6
   }
 ];
 
@@ -110,6 +124,14 @@ const jobTypeOptions = [
   "Internship"
 ];
 
+const ratingOptions = [
+  "All Ratings",
+  "4.5 & Up",
+  "4.0 & Up",
+  "3.5 & Up",
+  "3.0 & Up"
+];
+
 const MainFeature = ({ darkMode }) => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
@@ -118,11 +140,13 @@ const MainFeature = ({ darkMode }) => {
   const [filters, setFilters] = useState({
     location: "All Locations",
     industry: "All Industries",
-    jobType: "All Types"
+    jobType: "All Types",
+    rating: "All Ratings"
   });
   const [selectedJob, setSelectedJob] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [activeTab, setActiveTab] = useState('details');
   const [applicationStatus, setApplicationStatus] = useState({});
 
   // Icons
@@ -136,6 +160,7 @@ const MainFeature = ({ darkMode }) => {
   const DollarSignIcon = getIcon('DollarSign');
   const CalendarIcon = getIcon('Calendar');
   const CheckIcon = getIcon('Check');
+  const StarIcon = getIcon('Star');
 
   // Simulate loading jobs from API
   useEffect(() => {
@@ -176,6 +201,28 @@ const MainFeature = ({ darkMode }) => {
     if (filters.jobType !== "All Types") {
       results = results.filter(job => job.type === filters.jobType);
     }
+
+    // Apply rating filter
+    if (filters.rating !== "All Ratings") {
+      let minRating = 0;
+      
+      switch (filters.rating) {
+        case "4.5 & Up":
+          minRating = 4.5;
+          break;
+        case "4.0 & Up":
+          minRating = 4.0;
+          break;
+        case "3.5 & Up":
+          minRating = 3.5;
+          break;
+        case "3.0 & Up":
+          minRating = 3.0;
+          break;
+      }
+      
+      results = results.filter(job => job.companyRating >= minRating);
+    }
     
     setFilteredJobs(results);
   }, [searchQuery, filters, jobs]);
@@ -201,11 +248,13 @@ const MainFeature = ({ darkMode }) => {
   // Select a job to view details
   const handleSelectJob = (job) => {
     setSelectedJob(job);
+    setActiveTab('details');
   };
 
   // Close job details
   const handleCloseJobDetails = () => {
     setSelectedJob(null);
+    setActiveTab('details');
     setResumeFile(null);
   };
 
@@ -358,12 +407,28 @@ const MainFeature = ({ darkMode }) => {
                 ))}
               </select>
             </div>
+            <div className="mb-4">
+              <label className="label">Company Rating</label>
+              <select 
+                value={filters.rating}
+                onChange={(e) => handleFilterChange('rating', e.target.value)}
+                className="select"
+              >
+                {ratingOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
             
             <button 
               onClick={() => {
                 setFilters({
                   location: "All Locations",
-                  industry: "All Industries",
+                  jobType: "All Types",
+                  rating: "All Ratings"
                   jobType: "All Types"
                 });
                 setSearchQuery('');
@@ -436,12 +501,28 @@ const MainFeature = ({ darkMode }) => {
                   </select>
                 </div>
                 
+                <div className="mb-4">
+                  <label className="label">Company Rating</label>
+                  <select 
+                    value={filters.rating}
+                    onChange={(e) => handleFilterChange('rating', e.target.value)}
+                    className="select"
+                  >
+                    {ratingOptions.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
                 <button 
                   onClick={() => {
                     setFilters({
                       location: "All Locations",
                       industry: "All Industries",
-                      jobType: "All Types"
+                      jobType: "All Types",
+                      rating: "All Ratings"
                     });
                     setSearchQuery('');
                   }}
@@ -500,8 +581,18 @@ const MainFeature = ({ darkMode }) => {
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-white">{job.title}</h3>
-                      <p className="text-surface-500 dark:text-surface-400">{job.company}</p>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
+                        {job.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <p className="text-surface-500 dark:text-surface-400">
+                          {job.company}
+                        </p>
+                        <div className="flex items-center">
+                          <StarRating rating={job.companyRating} size="sm" /> 
+                          <span className="ml-1 text-xs text-surface-500 dark:text-surface-400">({job.reviewCount})</span>
+                        </div>
+                      </div>
                     </div>
                     {applicationStatus[job.id] && (
                       <div className="mt-2 md:mt-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
@@ -554,7 +645,7 @@ const MainFeature = ({ darkMode }) => {
             >
               <div className="sticky top-0 z-10 bg-white dark:bg-surface-800 flex justify-between items-center p-5 border-b border-surface-200 dark:border-surface-700">
                 <h3 className="text-xl font-bold text-surface-900 dark:text-white">{selectedJob.title}</h3>
-                <button 
+                <button
                   onClick={handleCloseJobDetails}
                   className="p-2 rounded-full hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
                   aria-label="Close details"
@@ -563,11 +654,32 @@ const MainFeature = ({ darkMode }) => {
                 </button>
               </div>
               
-              <div className="p-5 overflow-y-auto max-h-[calc(90vh-80px)]">
-                <div className="mb-6">
-                  <div className="flex items-center mb-2">
-                    <BuildingIcon className="w-5 h-5 text-surface-500 mr-2" />
-                    <span className="text-lg font-medium text-surface-900 dark:text-white">{selectedJob.company}</span>
+              {/* Tab Navigation */}
+              <div className="sticky top-[80px] z-10 bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
+                <div className="flex">
+                  <button 
+                    className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${activeTab === 'details' ? 'text-primary border-b-2 border-primary' : 'text-surface-600 dark:text-surface-400 hover:text-primary'}`}
+                    onClick={() => setActiveTab('details')}
+                  >
+                    Job Details
+                  </button>
+                  <button 
+                    className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${activeTab === 'reviews' ? 'text-primary border-b-2 border-primary' : 'text-surface-600 dark:text-surface-400 hover:text-primary'}`}
+                    onClick={() => setActiveTab('reviews')}
+                  >
+                    Company Reviews
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-5 overflow-y-auto max-h-[calc(90vh-130px)]">
+                {activeTab === 'details' ? (
+                  <>
+                  <div className="mb-6">
+                    <div className="flex items-center mb-2">
+                      <BuildingIcon className="w-5 h-5 text-surface-500 mr-2" />
+                      <span className="text-lg font-medium text-surface-900 dark:text-white">{selectedJob.company}</span>
+                    </div>
                   </div>
                   
                   <div className="flex flex-wrap gap-y-2">
@@ -589,6 +701,11 @@ const MainFeature = ({ darkMode }) => {
                     <div className="w-full sm:w-1/2 flex items-center text-surface-600 dark:text-surface-300">
                       <CalendarIcon className="w-4 h-4 mr-2 text-surface-500" />
                       <span>Posted: {new Date(selectedJob.postedDate).toLocaleDateString()}</span>
+                    </div>
+
+                    <div className="w-full mt-2 flex items-center text-surface-600 dark:text-surface-300">
+                      <StarIcon className="w-4 h-4 mr-2 text-surface-500" />
+                      <span>Company Rating: <StarRating rating={selectedJob.companyRating} size="sm" /> <span className="ml-2">({selectedJob.reviewCount} reviews)</span></span>
                     </div>
                   </div>
                 </div>
@@ -683,6 +800,10 @@ const MainFeature = ({ darkMode }) => {
                     </form>
                   )}
                 </div>
+                </>
+                ) : (
+                  <CompanyReviews companyName={selectedJob.company} />
+                )}
               </div>
             </motion.div>
           </motion.div>
