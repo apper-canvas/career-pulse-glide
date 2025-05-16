@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getIcon } from '../utils/iconUtils.jsx';
@@ -36,13 +36,16 @@ const Dashboard = () => {
   const jobPreferences = userProfileState.jobPreferences;
   
   // Initialize job preferences defaults if needed
-    desiredTitle: '',
-    desiredLocation: '',
-    desiredIndustry: '',
-    salaryExpectation: '',
-    workType: 'Full-time',
-    remotePreference: 'Hybrid',
-    relocationWillingness: false
+  // Default values (already handled in the Redux store):
+  // {
+  //   desiredTitle: '',
+  //   desiredLocation: '',
+  //   desiredIndustry: '',
+  //   salaryExpectation: '',
+  //   workType: 'Full-time', 
+  //   remotePreference: 'Hybrid',
+  //   relocationWillingness: false
+  // }
   
   // Use activeTab from URL if available, otherwise use state
   useEffect(() => {
