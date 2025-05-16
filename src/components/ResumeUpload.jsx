@@ -61,9 +61,13 @@ const ResumeUpload = ({ currentResume, onResumeUpload, onResumeDelete }) => {
   };
 
   const getFileIcon = (fileName) => {
-    if (fileName.endsWith('.pdf')) return '📄';
-    if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) return '📝';
-    return '📄';
+    // Check if fileName is defined and a string before calling endsWith
+    if (!fileName || typeof fileName !== 'string') {
+      return '📄'; // Default icon if filename is undefined or not a string
+    }
+    if (fileName.endsWith('.pdf')) return '📄'; // PDF icon
+    if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) return '📝'; // Word document icon
+    return '📄'; // Default file icon
   };
 
   return (
