@@ -9,6 +9,11 @@ const Home = ({ darkMode }) => {
   
   const handleShowTips = () => {
     setShowInterview(true);
+    // Allow component to render before scrolling
+    setTimeout(() => {
+      const element = document.getElementById('interview-tips');
+      element?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
     toast.success("Interview tips loaded successfully!");
   };
 
@@ -119,6 +124,7 @@ const Home = ({ darkMode }) => {
       {showInterview && (
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
+          id="interview-tips"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="py-10 md:py-16 bg-surface-100 dark:bg-surface-800/50"
