@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
@@ -47,7 +47,7 @@ function App() {
           </a>
           <div className="hidden md:flex items-center space-x-6">
             <a href="/" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Home</a>
-            <a href="/login" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Login</a>
+            <a href="/?showLogin=true" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Login</a>
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
           <div className="flex-1 md:flex-none"></div>
@@ -71,7 +71,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home darkMode={darkMode} />} />
-          <Route path="/login" element={<Login darkMode={darkMode} />} />
+          <Route path="/login" element={<Navigate to="/?showLogin=true" replace />} />
           <Route path="/dashboard" element={<Dashboard darkMode={darkMode} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

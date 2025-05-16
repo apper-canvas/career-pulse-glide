@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import MainFeature from '../components/MainFeature';
 import RegisterForm from '../components/RegisterForm';
+import LoginForm from '../components/LoginForm';
 import { getIcon } from '../utils/iconUtils';
 
 const Home = ({ darkMode }) => {
+  const location = useLocation();
+  const [showLogin, setShowLogin] = useState(false);
   const [showInterview, setShowInterview] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   
@@ -19,6 +22,16 @@ const Home = ({ darkMode }) => {
   const handleHideTips = () => {
     setShowInterview(false);
   };
+
+  useEffect(() => {
+    // Check if there's a showLogin param in the URL
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('showLogin') === 'true') {
+      setShowLogin(true);
+      setShowRegister(false);
+      scrollToSection('login-section');
+    }
+  }, [location]);
   
   const scrollToSection = (id) => {
     setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -66,11 +79,26 @@ const Home = ({ darkMode }) => {
               <button 
                 onClick={() => {
                   setShowRegister(true);
+                  if (showLogin) {
+                    setShowLogin(false);
+                  }
                   scrollToSection('register-section');
                 }}
                 className="btn-primary"
               >
                 Register Now
+              </button>
+              <button 
+                onClick={() => {
+                  setShowLogin(true);
+                  if (showRegister) {
+                    setShowRegister(false);
+                  }
+                  scrollToSection('login-section');
+                }}
+                className="btn-outline"
+              >
+                Login
               </button>
               <button 
                 onClick={handleShowTips}
@@ -137,6 +165,23 @@ const Home = ({ darkMode }) => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <RegisterForm onClose={() => setShowRegister(false)} />
+            </div>
+          </div>
+        </motion.section>
+      )}
+      
+      {/* Login Section (Conditionally Rendered) */}
+      {showLogin && (
+        <motion.section 
+          id="login-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="py-10 md:py-16"
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-md mx-auto">
+              <LoginForm onClose={() => setShowLogin(false)} />
             </div>
           </div>
         </motion.section>
@@ -219,7 +264,13 @@ const Home = ({ darkMode }) => {
       <section className="py-8 bg-surface-50 dark:bg-surface-800">
         <div className="container mx-auto px-4 text-center">
           <p className="text-surface-600 dark:text-surface-400">
-            Already have an account? <Link to="/login" className="text-primary hover:underline">Login here</Link>
+            Already have an account? <button 
+              onClick={() => {
+                setShowLogin(true);
+                setShowRegister(false);
+                scrollToSection('login-section');
+              }}
+              className="text-primary hover:underline">Login here</button>
           </p>
         </div>
       </section>
