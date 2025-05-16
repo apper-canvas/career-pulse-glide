@@ -76,7 +76,16 @@ function AppContent() {
             <a href="/dashboard" className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light">Dashboard</a>
           </div>
           <div className="flex-1 md:flex-none"></div>
-          <button
+          {!isAuthenticated && (
+            <button
+              onClick={openLoginModal}
+              className="mr-3 btn-primary"
+              aria-label="Login"
+            >
+              Login
+            </button>
+          )}
+          <button 
             onClick={toggleDarkMode}
             className="p-2 rounded-full hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
             aria-label="Toggle dark mode"
